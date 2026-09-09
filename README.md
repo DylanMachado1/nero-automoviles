@@ -2,7 +2,7 @@
 
 Plataforma comercial de [NERO Automóviles](https://www.instagram.com/nero.automoviles/), un servicio uruguayo de intermediación digital de vehículos.
 
-El propietario conserva el vehículo. NERO prepara su presentación, promociona la gestión, recibe consultas, filtra interesados y acompaña la negociación. No existe costo inicial ni exclusividad. La comisión es del 4% del precio final únicamente cuando la venta se concreta con un comprador conseguido o gestionado por NERO. El pago del vehículo se realiza directamente entre comprador y propietario.
+El propietario conserva el vehículo, decide si acepta o rechaza ofertas y puede seguir vendiéndolo por su cuenta. NERO prepara su presentación, promociona la gestión, recibe consultas, filtra interesados y acompaña la negociación. No existe costo inicial ni exclusividad. La comisión es del 4% del valor total acordado de la operación únicamente cuando la venta se concreta con un comprador conseguido o gestionado por NERO; si existe una permuta, esa base incluye el efectivo y el valor atribuido al vehículo entregado. El pago del vehículo se realiza directamente entre comprador y propietario.
 
 El sitio está preparado para operar sin inventar stock, resultados comerciales, oficinas ni verificaciones. Los vehículos aparecen en el catálogo únicamente cuando un administrador cambia su estado a `PUBLICADO`.
 
@@ -11,7 +11,7 @@ El sitio está preparado para operar sin inventar stock, resultados comerciales,
 - Sitio responsive con identidad negra, blanca y plata, logo oficial, navegación móvil, animaciones sutiles y `prefers-reduced-motion`.
 - Home orientada a captar propietarios y compradores, con el modelo comercial explicado en lenguaje directo.
 - Formularios persistentes para vender un auto, solicitar una búsqueda y realizar consultas u ofertas.
-- Datos privados del propietario separados de la futura publicación pública.
+- Datos privados del propietario separados de la futura publicación pública, incluido el precio mínimo y si representa un precio total de venta o el neto esperado después de la comisión.
 - Hasta 12 fotografías por solicitud o vehículo, con validación real de JPEG, PNG y WebP, límite de 3 MB por archivo y almacenamiento privado en R2.
 - Catálogo con filtros por URL, orden, estado vacío y fichas dinámicas con galería, información declarada, revisión NERO, consulta y oferta.
 - Hasta tres vehículos destacados en la home cuando existan publicaciones reales; la sección se oculta mientras el catálogo esté vacío.
@@ -75,7 +75,7 @@ npm run build:pages
 
 1. Configurá `NERO_ADMIN_EMAILS` con el correo exacto de la cuenta autorizada.
 2. Entrá en `/admin`.
-3. Creá un vehículo o convertí una solicitud aceptada.
+3. Llevá la solicitud de `PENDIENTE` a `EN_REVISION` y, si corresponde, a `ACEPTADA`. Solamente entonces puede convertirse en vehículo.
 4. Revisá datos, fotografías, información declarada y notas de revisión en estado `BORRADOR`.
 5. Cambiá el estado a `PUBLICADO` para incorporarlo al catálogo.
 

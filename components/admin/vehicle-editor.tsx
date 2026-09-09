@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ArrowDown, ArrowLeft, ArrowUp, Star, Trash2, Upload } from 'lucide-react';
+import { sitePath } from '@/lib/brand';
 
 type Vehicle = Record<string, string | number | null> & { id: string };
 type Image = { id: string; object_key: string; alt: string | null; is_primary: number };
@@ -53,13 +54,13 @@ export function VehicleEditor({ vehicle, initialImages }: { vehicle: Vehicle; in
     if (!window.confirm('¿Eliminar este vehículo y sus imágenes? Esta acción no se puede deshacer.')) return;
     setBusy(true);
     const response = await fetch(`/api/admin/vehicles/${vehicle.id}`, { method: 'DELETE' });
-    if (response.ok) location.assign('/admin/vehiculos');
+    if (response.ok) location.assign(sitePath('/admin/vehiculos'));
     else { const data = await response.json() as { error?: string }; setMessage(data.error ?? 'No se pudo eliminar.'); setBusy(false); }
   }
 
   return (
     <div className="admin-editor">
-      <a className="admin-back" href="/admin/vehiculos"><ArrowLeft /> Volver a vehículos</a>
+      <a className="admin-back" href={sitePath('/admin/vehiculos')}><ArrowLeft /> Volver a vehículos</a>
       <form className="admin-edit-form" onSubmit={save}>
         <label>Marca<input name="brand" required defaultValue={String(vehicle.brand ?? '')} /></label>
         <label>Modelo<input name="model" required defaultValue={String(vehicle.model ?? '')} /></label>

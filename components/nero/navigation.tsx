@@ -35,9 +35,9 @@ export function Navigation() {
         {links.map(([label, href]) => <a key={href} href={sitePath(href)}>{label}</a>)}
       </nav>
       <a href={sitePath('/vende-tu-auto')} className="button header-cta">Vendé tu auto <ArrowUpRight size={16} /></a>
-      <button type="button" className="menu-button" aria-label={open ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</button>
+      <button type="button" className="menu-button" aria-label={open ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</button>
     </div>
-    <div className={`mobile-menu ${open ? 'is-open' : ''}`} aria-hidden={!open}>
+    <div id="mobile-navigation" className={`mobile-menu ${open ? 'is-open' : ''}`} aria-hidden={!open}>
       <div className="mobile-menu-inner">{links.map(([label, href], i) => <a key={href} href={sitePath(href)} onClick={() => setOpen(false)}><span>0{i + 1}</span>{label}<ArrowUpRight /></a>)}</div>
       <p>NERO Automóviles<br /><span>Tu auto. Nuestra gestión.</span></p>
     </div>

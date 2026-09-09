@@ -6,6 +6,7 @@ export const runtime = 'edge';
 const MAX_FILES = 12, MAX_FILE_SIZE = 3 * 1024 * 1024, MAX_TOTAL = 24 * 1024 * 1024;
 const yesNo = new Set(['yes', 'no']);
 const yesNoUnknown = new Set(['yes', 'no', 'unknown']);
+const minimumPriceBases = new Set(['total_sale_price', 'net_to_owner']);
 
 function validImage(bytes: Uint8Array, type: string) {
   if (type === 'image/jpeg') return bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
@@ -32,6 +33,12 @@ export async function POST(request: Request) {
     if (images.length > MAX_FILES) throw new Error(`Podés adjuntar hasta ${MAX_FILES} fotos.`);
     if (images.reduce((total, file) => total + file.size, 0) > MAX_TOTAL) throw new Error('Las fotos superan el límite total de 24 MB.');
 
+    const minimumPrice = integer(form, 'minimumPrice', 'El precio mínimo', 0, 100000000, true);
+    const minimumPriceBasis = optional(form, 'minimumPriceBasis', 30);
+    if (minimumPrice !== null && !minimumPriceBasis) throw new Error('Indicá a qué corresponde el precio mínimo.');
+    if (minimumPriceBasis && !minimumPriceBases.has(minimumPriceBasis)) throw new Error('La base del precio mínimo no es válida.');
+    if (minimumPrice === null && minimumPriceBasis) throw new Error('Indicá el precio mínimo correspondiente.');
+
     const now = new Date().toISOString(), id = crypto.randomUUID();
     const { db, files } = getBindings();
     const imageRows: unknown[][] = [];
@@ -47,8 +54,8 @@ export async function POST(request: Request) {
     }
 
     const statements = [
-      db.prepare('INSERT INTO seller_requests (id,name,phone,email,department,city,brand,model,version,year,mileage,fuel,transmission,engine,color,doors,asking_price,currency,condition,description,registration,registry_number,is_owner,debt_status,lien_status,accepts_trade_in,minimum_price,visit_zone,status,terms_version,terms_accepted_at,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(
-        id, required(form, 'name', 'tu nombre'), phone(form), email(form), required(form, 'department', 'el departamento'), required(form, 'city', 'la ciudad'), required(form, 'brand', 'la marca'), required(form, 'model', 'el modelo'), optional(form, 'version'), integer(form, 'year', 'El año', 1900, new Date().getFullYear() + 1), integer(form, 'mileage', 'El kilometraje', 0, 2000000), required(form, 'fuel', 'el combustible'), required(form, 'transmission', 'la transmisión'), optional(form, 'engine'), optional(form, 'color'), integer(form, 'doors', 'La cantidad de puertas', 2, 6, true), integer(form, 'askingPrice', 'El precio', 0, 100000000, true), 'USD', required(form, 'condition', 'el estado general'), required(form, 'description', 'la descripción', 3000), optional(form, 'registration', 30), optional(form, 'registryNumber', 40), choice(form, 'isOwner', 'titularidad', yesNo), choice(form, 'debtStatus', 'deuda', yesNoUnknown), choice(form, 'lienStatus', 'gravamen', yesNoUnknown), choice(form, 'acceptsTradeIn', 'permuta', yesNo), integer(form, 'minimumPrice', 'El precio mínimo', 0, 100000000, true), required(form, 'visitZone', 'la zona para coordinar una visita'), 'PENDIENTE', '2026-09-08-v2', now, now, now,
+      db.prepare('INSERT INTO seller_requests (id,name,phone,email,department,city,brand,model,version,year,mileage,fuel,transmission,engine,color,doors,asking_price,currency,condition,description,registration,registry_number,is_owner,debt_status,lien_status,accepts_trade_in,minimum_price,minimum_price_basis,visit_zone,status,terms_version,terms_accepted_at,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(
+        id, required(form, 'name', 'tu nombre'), phone(form), email(form), required(form, 'department', 'el departamento'), required(form, 'city', 'la ciudad'), required(form, 'brand', 'la marca'), required(form, 'model', 'el modelo'), optional(form, 'version'), integer(form, 'year', 'El año', 1900, new Date().getFullYear() + 1), integer(form, 'mileage', 'El kilometraje', 0, 2000000), required(form, 'fuel', 'el combustible'), required(form, 'transmission', 'la transmisión'), optional(form, 'engine'), optional(form, 'color'), integer(form, 'doors', 'La cantidad de puertas', 2, 6, true), integer(form, 'askingPrice', 'El precio', 0, 100000000, true), 'USD', required(form, 'condition', 'el estado general'), required(form, 'description', 'la descripción', 3000), optional(form, 'registration', 30), optional(form, 'registryNumber', 40), choice(form, 'isOwner', 'titularidad', yesNo), choice(form, 'debtStatus', 'deuda', yesNoUnknown), choice(form, 'lienStatus', 'gravamen', yesNoUnknown), choice(form, 'acceptsTradeIn', 'permuta', yesNo), minimumPrice, minimumPriceBasis, required(form, 'visitZone', 'la zona para coordinar una visita'), 'PENDIENTE', '2026-09-08-v3', now, now, now,
       ),
       ...imageRows.map((row) => db.prepare('INSERT INTO seller_request_images (id,request_id,object_key,content_type,size,position,created_at) VALUES (?,?,?,?,?,?,?)').bind(...row)),
     ];

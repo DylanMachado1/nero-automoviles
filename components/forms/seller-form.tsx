@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { sitePath } from '@/lib/brand';
 import { ImageUploader } from './image-uploader';
 import { FormStatus, type FormState } from './form-status';
 import { SelectField, TextAreaField, TextField, departments, fuelOptions, transmissionOptions } from './fields';
@@ -23,7 +24,7 @@ export function SellerForm() {
       setState({ kind: 'error', message: error instanceof Error ? error.message : 'No pudimos enviar la solicitud.' });
     }
   }
-  if (state.kind === 'success') return <div className="success-panel"><CheckCircle2 /><p className="eyebrow muted">SOLICITUD RECIBIDA</p><h2>Gracias por confiar en NERO.</h2><p>{state.message}</p><a href="/" className="button button-light">Volver al inicio <ArrowRight /></a></div>;
+  if (state.kind === 'success') return <div className="success-panel"><CheckCircle2 /><p className="eyebrow muted">SOLICITUD RECIBIDA</p><h2>Gracias por confiar en NERO.</h2><p>{state.message}</p><a href={sitePath('/')} className="button button-light">Volver al inicio <ArrowRight /></a></div>;
   return <form className="nero-form" onSubmit={submit} noValidate>
     <input name="website" tabIndex={-1} autoComplete="off" className="honeypot" /><FormStatus state={state} />
     <fieldset><legend><span>01</span> Tus datos</legend><div className="form-grid">
@@ -46,10 +47,11 @@ export function SellerForm() {
       <SelectField label="¿Tiene prenda, embargo o gravamen conocido?" name="lienStatus" required hint="Dato privado"><option value="yes">Sí</option><option value="no">No</option><option value="unknown">No sé</option></SelectField>
       <SelectField label="¿Aceptás permuta?" name="acceptsTradeIn" required hint="Dato privado"><option value="yes">Sí</option><option value="no">No</option></SelectField>
       <TextField label="Precio mínimo que considerarías (USD)" name="minimumPrice" type="number" min={0} hint="Dato privado · no se mostrará públicamente" />
+      <SelectField label="¿A qué corresponde ese precio mínimo?" name="minimumPriceBasis" hint="Dato privado · completalo si indicaste un precio mínimo"><option value="total_sale_price">Precio mínimo total de venta</option><option value="net_to_owner">Monto neto que quiero recibir luego de la comisión</option></SelectField>
       <TextField label="Departamento / zona para coordinar una visita" name="visitZone" required hint="Dato privado · no se mostrará públicamente" />
     </div></fieldset>
     <fieldset><legend><span>04</span> Fotografías</legend><ImageUploader onChange={setFiles} /></fieldset>
-    <label className="terms-check" htmlFor="terms"><Checkbox id="terms" name="terms" required /><span>He leído y acepto las <a href="/condiciones" target="_blank">condiciones para solicitar la comercialización</a> de mi vehículo.</span></label>
+    <label className="terms-check" htmlFor="terms"><Checkbox id="terms" name="terms" required /><span>He leído y acepto las <a href={sitePath('/condiciones')} target="_blank">condiciones para solicitar la comercialización</a> de mi vehículo.</span></label>
     <button className="button button-light submit-button" disabled={state.kind === 'sending'}>Enviar vehículo a NERO <ArrowRight /></button><p className="submit-note">Sin costo por adelantado. La solicitud queda pendiente de revisión y el vehículo no se publica automáticamente.</p>
   </form>;
 }

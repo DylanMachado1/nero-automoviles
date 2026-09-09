@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { ArrowRight, Camera, Mail } from 'lucide-react';
 import { InquiryForm } from '@/components/forms/inquiry-form';
 import { SiteShell } from '@/components/nero/site-shell';
-import { BRAND } from '@/lib/brand';
+import { BRAND, sitePath } from '@/lib/brand';
 
 export const metadata: Metadata = {
   title: 'Contacto',
@@ -21,7 +21,7 @@ export default function ContactPage() {
           <p>Contanos qué necesitás. Revisamos cada consulta y coordinamos el contacto de forma personal.</p>
         </header>
         <section className="form-layout container">
-          <aside><span>04</span><h2>Compra, venta o búsqueda.</h2><p>Elegí el camino que mejor describe lo que necesitás o escribinos por nuestro canal actual.</p><div className="contact-paths"><a href="/vende-tu-auto">Quiero vender mi auto <ArrowRight /></a><a href="/buscamos-tu-auto">Estoy buscando un auto <ArrowRight /></a></div><a className="quiet-link" href={BRAND.instagram} target="_blank" rel="noreferrer"><Camera /> {BRAND.instagramHandle}</a>{contactEmail ? <a className="quiet-link" href={`mailto:${contactEmail}`}><Mail /> {contactEmail}</a> : null}</aside>
+          <aside><span>04</span><h2>Compra, venta o búsqueda.</h2><p>Elegí el camino que mejor describe lo que necesitás o escribinos por nuestro canal actual.</p><div className="contact-paths"><a href={sitePath('/vende-tu-auto')}>Quiero vender mi auto <ArrowRight /></a><a href={sitePath('/buscamos-tu-auto')}>Estoy buscando un auto <ArrowRight /></a></div><a className="quiet-link" href={BRAND.instagram} target="_blank" rel="noreferrer"><Camera /> {BRAND.instagramHandle}</a>{contactEmail ? <a className="quiet-link" href={`mailto:${contactEmail}`}><Mail /> {contactEmail}</a> : null}</aside>
           <InquiryForm reason="Consulta general" />
         </section>
       </main>

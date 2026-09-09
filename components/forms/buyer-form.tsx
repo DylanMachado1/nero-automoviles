@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { FormStatus, type FormState } from './form-status';
 import { SelectField, TextAreaField, TextField, departments, fuelOptions, transmissionOptions } from './fields';
+import { sitePath } from '@/lib/brand';
 
 export function BuyerForm() {
   const [state, setState] = useState<FormState>({ kind: 'idle' });
@@ -19,7 +20,7 @@ export function BuyerForm() {
       setState({ kind: 'error', message: error instanceof Error ? error.message : 'No pudimos guardar tu búsqueda.' });
     }
   }
-  if (state.kind === 'success') return <div className="success-panel"><CheckCircle2 /><p className="eyebrow muted">BÚSQUEDA RECIBIDA</p><h2>Ya sabemos por dónde empezar.</h2><p>{state.message}</p><a href="/vehiculos" className="button button-light">Ver vehículos <ArrowRight /></a></div>;
+  if (state.kind === 'success') return <div className="success-panel"><CheckCircle2 /><p className="eyebrow muted">BÚSQUEDA RECIBIDA</p><h2>Ya sabemos por dónde empezar.</h2><p>{state.message}</p><a href={sitePath('/vehiculos')} className="button button-light">Ver vehículos <ArrowRight /></a></div>;
   return <form className="nero-form" onSubmit={submit}>
     <input name="website" tabIndex={-1} className="honeypot" /><FormStatus state={state} />
     <fieldset><legend><span>01</span> Contacto</legend><div className="form-grid">

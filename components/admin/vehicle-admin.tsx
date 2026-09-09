@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Pencil } from 'lucide-react';
 import { EntityActions } from './entity-table';
+import { sitePath } from '@/lib/brand';
 
 export function VehicleCreateForm() {
   const [state, setState] = useState('');
@@ -25,5 +26,5 @@ export function VehicleCreateForm() {
 }
 
 export function VehicleActions({ id, status }: { id: string; status: string }) {
-  return <div className="vehicle-admin-actions"><a href={`/admin/vehiculos/${id}`}><Pencil /> Editar</a><EntityActions id={id} type="vehicle" status={status} options={['BORRADOR', 'PUBLICADO', 'RESERVADO', 'VENDIDO']} /></div>;
+  return <div className="vehicle-admin-actions"><a href={sitePath(`/admin/vehiculos/${id}`)}><Pencil /> Editar</a><EntityActions id={id} type="vehicle" status={status} options={['BORRADOR', 'PUBLICADO', 'RESERVADO', 'VENDIDO']} /></div>;
 }

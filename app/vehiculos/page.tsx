@@ -5,6 +5,7 @@ import { CatalogFilters } from '@/components/vehicles/catalog-filters';
 import { VehicleCard } from '@/components/vehicles/vehicle-card';
 import { listPublicVehicles } from '@/repositories/vehicles';
 import type { VehicleSummary } from '@/types/nero';
+import { sitePath } from '@/lib/brand';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,7 +66,7 @@ export default async function VehiclesPage({
                 <p className="eyebrow muted">CATÁLOGO EN PREPARACIÓN</p>
                 <h2>Estamos incorporando nuestros primeros vehículos.</h2>
                 <p>Cada vehículo publicado en NERO corresponde a una gestión real con su propietario. No mostramos stock ficticio.</p>
-                <div className="catalog-empty-actions"><a className="button button-light" href="/vende-tu-auto">Vendé tu auto con NERO</a><a className="button button-outline" href="/buscamos-tu-auto">Decinos qué auto buscás</a></div>
+                <div className="catalog-empty-actions"><a className="button button-light" href={sitePath('/vende-tu-auto')}>Vendé tu auto con NERO</a><a className="button button-outline" href={sitePath('/buscamos-tu-auto')}>Decinos qué auto buscás</a></div>
               </div>
             )}
           </section>

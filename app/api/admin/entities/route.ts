@@ -33,6 +33,7 @@ export async function POST(request: Request) {
       const source = await db.prepare('SELECT * FROM seller_requests WHERE id=? LIMIT 1').bind(body.id).first<SellerSource>();
       if (!source) throw new Error('Solicitud no encontrada.');
       if (source.converted_vehicle_id) return Response.json({ ok:true, status:source.status, vehicleId:source.converted_vehicle_id });
+      if (source.status !== 'ACEPTADA') throw new Error('Solo una solicitud aceptada puede convertirse en vehículo.');
       const vehicleId = crypto.randomUUID();
       const base = slugify(`${source.brand}-${source.model}-${source.year}`);
       let slug = base, suffix = 2;
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
       const statements = [
         db.prepare('INSERT INTO vehicles (id,slug,brand,model,version,year,price,currency,mileage,fuel,transmission,engine,department,city,color,doors,condition,description,status,seller_request_id,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(vehicleId,slug,source.brand,source.model,source.version,source.year,source.asking_price,source.currency,source.mileage,source.fuel,source.transmission,source.engine,source.department,source.city,source.color,source.doors,source.condition,source.description,'BORRADOR',source.id,now,now),
         ...images.results.map((image,i) => db.prepare('INSERT INTO vehicle_images (id,vehicle_id,object_key,content_type,size,position,alt,is_primary,created_at) VALUES (?,?,?,?,?,?,?,?,?)').bind(crypto.randomUUID(),vehicleId,image.object_key,image.content_type,image.size,i,`${source.brand} ${source.model} — foto ${i+1}`,i===0?1:0,now)),
-        db.prepare("UPDATE seller_requests SET converted_vehicle_id=?,status='ACEPTADA',updated_at=? WHERE id=? AND converted_vehicle_id IS NULL").bind(vehicleId,now,body.id),
+        db.prepare("UPDATE seller_requests SET converted_vehicle_id=?,updated_at=? WHERE id=? AND status='ACEPTADA' AND converted_vehicle_id IS NULL").bind(vehicleId,now,body.id),
         db.prepare('INSERT INTO audit_events (id,admin_user_id,action,entity_type,entity_id,created_at) VALUES (?,?,?,?,?,?)').bind(crypto.randomUUID(),admin.userId,'CONVERT_TO_DRAFT','seller',body.id,now),
       ];
       await db.batch(statements);

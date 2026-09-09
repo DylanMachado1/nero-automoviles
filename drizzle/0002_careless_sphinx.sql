@@ -1,0 +1,1 @@
+ALTER TABLE `seller_requests` ADD `minimum_price_basis` text;
