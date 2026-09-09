@@ -1,2 +1,6 @@
-import { SiteShell } from '@/components/nero/site-shell';import { RevealController } from '@/components/nero/reveal';import { HomeHero } from '@/components/sections/home-hero';import { Services } from '@/components/sections/services';import { SellHome } from '@/components/sections/sell-home';import { HomeBottom } from '@/components/sections/home-bottom';
-export default function Home(){return <SiteShell><RevealController/><main id="contenido"><HomeHero/><Services/><SellHome/><HomeBottom/></main></SiteShell>}
+import { HomeContent } from '@/components/sections/home-content';
+import { FeaturedVehicles } from '@/components/sections/featured-vehicles';
+
+export default function Home() {
+  return <HomeContent featured={<FeaturedVehicles />} />;
+}

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Camera } from 'lucide-react';
+import { ArrowRight, Camera, Mail } from 'lucide-react';
 import { InquiryForm } from '@/components/forms/inquiry-form';
 import { SiteShell } from '@/components/nero/site-shell';
 import { BRAND } from '@/lib/brand';
@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim();
   return (
     <SiteShell>
       <main id="contenido" className="inner-page">
@@ -20,7 +21,7 @@ export default function ContactPage() {
           <p>Contanos qué necesitás. Revisamos cada consulta y coordinamos el contacto de forma personal.</p>
         </header>
         <section className="form-layout container">
-          <aside><span>04</span><h2>Compra, venta o búsqueda.</h2><p>También podés escribirnos por Instagram. No publicamos teléfonos ni direcciones que todavía no fueron confirmados por NERO.</p><a className="quiet-link" href={BRAND.instagram} target="_blank" rel="noreferrer"><Camera /> {BRAND.instagramHandle}</a></aside>
+          <aside><span>04</span><h2>Compra, venta o búsqueda.</h2><p>Elegí el camino que mejor describe lo que necesitás o escribinos por nuestro canal actual.</p><div className="contact-paths"><a href="/vende-tu-auto">Quiero vender mi auto <ArrowRight /></a><a href="/buscamos-tu-auto">Estoy buscando un auto <ArrowRight /></a></div><a className="quiet-link" href={BRAND.instagram} target="_blank" rel="noreferrer"><Camera /> {BRAND.instagramHandle}</a>{contactEmail ? <a className="quiet-link" href={`mailto:${contactEmail}`}><Mail /> {contactEmail}</a> : null}</aside>
           <InquiryForm reason="Consulta general" />
         </section>
       </main>

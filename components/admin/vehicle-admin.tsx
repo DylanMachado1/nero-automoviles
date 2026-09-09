@@ -18,7 +18,8 @@ export function VehicleCreateForm() {
     <input name="year" type="number" placeholder="Año" aria-label="Año" required /><input name="mileage" type="number" placeholder="Kilometraje" aria-label="Kilometraje" required /><input name="price" type="number" placeholder="Precio USD" aria-label="Precio USD" />
     <input name="fuel" placeholder="Combustible" aria-label="Combustible" required /><input name="transmission" placeholder="Transmisión" aria-label="Transmisión" required /><input name="engine" placeholder="Motor" aria-label="Motor" />
     <input name="department" placeholder="Departamento" aria-label="Departamento" required /><input name="city" placeholder="Ciudad" aria-label="Ciudad" required /><input name="color" placeholder="Color" aria-label="Color" /><input name="doors" type="number" placeholder="Puertas" aria-label="Puertas" />
-    <textarea name="description" placeholder="Descripción" aria-label="Descripción" required /><textarea name="equipment" placeholder="Equipamiento, una línea por elemento" aria-label="Equipamiento" />
+    <textarea name="description" placeholder="Descripción declarada por el propietario" aria-label="Descripción" required /><textarea name="equipment" placeholder="Equipamiento, una línea por elemento" aria-label="Equipamiento" />
+    <textarea name="additionalInfo" placeholder="Información adicional declarada" aria-label="Información adicional declarada" /><textarea name="reviewNotes" placeholder="Revisión NERO: solo observaciones realmente revisadas" aria-label="Revisión NERO" />
     <input name="images" type="file" accept="image/jpeg,image/png,image/webp" multiple aria-label="Imágenes" /><button className="button button-light">Crear borrador</button><span aria-live="polite">{state}</span>
   </form></details>;
 }

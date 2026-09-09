@@ -10,6 +10,7 @@ const links = [
   ['Vendé tu auto', '/vende-tu-auto'],
   ['Buscamos tu auto', '/buscamos-tu-auto'],
   ['Cómo funciona', '/#como-funciona'],
+  ['Sobre NERO', '/sobre-nero'],
   ['Contacto', '/contacto'],
 ];
 

@@ -79,6 +79,7 @@ export function VehicleEditor({ vehicle, initialImages }: { vehicle: Vehicle; in
         <label className="wide">Descripción<textarea name="description" required defaultValue={String(vehicle.description ?? '')} /></label>
         <label className="wide">Equipamiento<textarea name="equipment" defaultValue={String(vehicle.equipment ?? '')} /></label>
         <label className="wide">Información adicional<textarea name="additionalInfo" defaultValue={String(vehicle.additional_info ?? '')} /></label>
+        <label className="wide">Revisión NERO<textarea name="reviewNotes" placeholder="Registrá únicamente observaciones que NERO haya revisado realmente y su alcance." defaultValue={String(vehicle.review_notes ?? '')} /></label>
         <div className="wide admin-edit-actions"><button className="button button-light" disabled={busy}>Guardar cambios</button><span aria-live="polite">{message}</span></div>
       </form>
 

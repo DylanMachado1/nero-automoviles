@@ -17,7 +17,7 @@ export async function PATCH(request: Request, { params }: Context) {
     if (!exists) return Response.json({ ok: false, error: 'Vehículo no encontrado.' }, { status: 404 });
 
     await db.batch([
-      db.prepare(`UPDATE vehicles SET brand=?,model=?,version=?,year=?,price=?,currency=?,mileage=?,fuel=?,transmission=?,engine=?,department=?,city=?,color=?,doors=?,condition=?,description=?,equipment=?,additional_info=?,updated_at=? WHERE id=?`).bind(
+      db.prepare(`UPDATE vehicles SET brand=?,model=?,version=?,year=?,price=?,currency=?,mileage=?,fuel=?,transmission=?,engine=?,department=?,city=?,color=?,doors=?,condition=?,description=?,equipment=?,additional_info=?,review_notes=?,updated_at=? WHERE id=?`).bind(
         required(form, 'brand', 'la marca'),
         required(form, 'model', 'el modelo'),
         optional(form, 'version'),
@@ -36,6 +36,7 @@ export async function PATCH(request: Request, { params }: Context) {
         required(form, 'description', 'la descripción', 3000),
         optional(form, 'equipment', 5000),
         optional(form, 'additionalInfo', 3000),
+        optional(form, 'reviewNotes', 3000),
         now,
         id,
       ),

@@ -7,7 +7,7 @@ const origin = 'https://nero-automoviles.dylanvpi1899.chatgpt.site';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const staticPages = ['', '/vehiculos', '/vende-tu-auto', '/buscamos-tu-auto', '/contacto'].map((path) => ({
+  const staticPages = ['', '/vehiculos', '/vende-tu-auto', '/buscamos-tu-auto', '/sobre-nero', '/contacto', '/condiciones', '/privacidad'].map((path) => ({
     url: `${origin}${path}`,
     lastModified: now,
     changeFrequency: path === '/vehiculos' ? 'daily' as const : 'monthly' as const,

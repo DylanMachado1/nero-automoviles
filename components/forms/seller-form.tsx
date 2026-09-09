@@ -38,8 +38,18 @@ export function SellerForm() {
       <TextField label="Precio pretendido (USD)" name="askingPrice" type="number" min={0} /><SelectField label="Estado general" name="condition" required><option>Excelente</option><option>Muy bueno</option><option>Bueno</option><option>A revisar</option></SelectField>
       <TextAreaField label="Descripción" name="description" required placeholder="Contanos sobre el estado, mantenimiento y cualquier detalle relevante." />
     </div></fieldset>
-    <fieldset><legend><span>03</span> Fotografías</legend><ImageUploader onChange={setFiles} /></fieldset>
+    <fieldset className="private-fields"><legend><span>03</span> Datos privados para evaluar la gestión</legend><p className="fieldset-note">Estos datos no se mostrarán públicamente ni pasarán automáticamente a una publicación.</p><div className="form-grid">
+      <TextField label="Matrícula" name="registration" hint="Dato privado · podés completarlo más adelante" />
+      <TextField label="Padrón" name="registryNumber" hint="Dato privado · podés completarlo más adelante" />
+      <SelectField label="¿Sos titular del vehículo?" name="isOwner" required hint="Dato privado"><option value="yes">Sí</option><option value="no">No</option></SelectField>
+      <SelectField label="¿El vehículo tiene deuda?" name="debtStatus" required hint="Dato privado"><option value="yes">Sí</option><option value="no">No</option><option value="unknown">No sé</option></SelectField>
+      <SelectField label="¿Tiene prenda, embargo o gravamen conocido?" name="lienStatus" required hint="Dato privado"><option value="yes">Sí</option><option value="no">No</option><option value="unknown">No sé</option></SelectField>
+      <SelectField label="¿Aceptás permuta?" name="acceptsTradeIn" required hint="Dato privado"><option value="yes">Sí</option><option value="no">No</option></SelectField>
+      <TextField label="Precio mínimo que considerarías (USD)" name="minimumPrice" type="number" min={0} hint="Dato privado · no se mostrará públicamente" />
+      <TextField label="Departamento / zona para coordinar una visita" name="visitZone" required hint="Dato privado · no se mostrará públicamente" />
+    </div></fieldset>
+    <fieldset><legend><span>04</span> Fotografías</legend><ImageUploader onChange={setFiles} /></fieldset>
     <label className="terms-check" htmlFor="terms"><Checkbox id="terms" name="terms" required /><span>He leído y acepto las <a href="/condiciones" target="_blank">condiciones para solicitar la comercialización</a> de mi vehículo.</span></label>
-    <button className="button button-light submit-button" disabled={state.kind === 'sending'}>Enviar vehículo a NERO <ArrowRight /></button><p className="submit-note">La solicitud queda pendiente de revisión. El vehículo no se publica automáticamente.</p>
+    <button className="button button-light submit-button" disabled={state.kind === 'sending'}>Enviar vehículo a NERO <ArrowRight /></button><p className="submit-note">Sin costo por adelantado. La solicitud queda pendiente de revisión y el vehículo no se publica automáticamente.</p>
   </form>;
 }

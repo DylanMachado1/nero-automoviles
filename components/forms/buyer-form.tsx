@@ -32,8 +32,12 @@ export function BuyerForm() {
       <TextField label="Año mínimo" name="minYear" type="number" min={1900} max={new Date().getFullYear() + 1} /><TextField label="Kilometraje máximo" name="maxMileage" type="number" min={0} />
       <SelectField label="Combustible" name="fuel">{fuelOptions.map((value) => <option key={value}>{value}</option>)}</SelectField><SelectField label="Transmisión" name="transmission">{transmissionOptions.map((value) => <option key={value}>{value}</option>)}</SelectField>
       <SelectField label="Departamento" name="department">{departments.map((value) => <option key={value}>{value}</option>)}</SelectField><SelectField label="¿Buscar en todo Uruguay?" name="nationwide" required><option value="yes">Sí</option><option value="no">No</option></SelectField>
+      <SelectField label="Forma de pago" name="paymentMethod" required><option value="cash">Contado</option><option value="financing">Financiación</option><option value="undecided">Aún no definido</option></SelectField>
+      <SelectField label="¿Tenés un vehículo para entregar?" name="hasTradeIn" required><option value="yes">Sí</option><option value="no">No</option></SelectField>
+      <SelectField label="¿Cuándo pensás comprar?" name="purchaseTimeline" required><option value="asap">Lo antes posible</option><option value="this_month">Este mes</option><option value="one_to_three_months">1 a 3 meses</option><option value="evaluating">Estoy evaluando opciones</option></SelectField>
       <TextAreaField label="Comentarios" name="comments" placeholder="Contanos prioridades o detalles que debamos tener en cuenta." />
     </div></fieldset>
+    <fieldset><legend><span>03</span> Qué priorizás</legend><p className="fieldset-note">Podés elegir varias opciones.</p><div className="choice-grid">{['Precio','Año','Kilometraje','Consumo','Transmisión automática','Equipamiento','Espacio','Seguridad','Otro'].map((value)=><label key={value}><input type="checkbox" name="priorities" value={value}/><span>{value}</span></label>)}</div></fieldset>
     <button className="button button-light submit-button" disabled={state.kind === 'sending'}>Empezar mi búsqueda <ArrowRight /></button>
   </form>;
 }

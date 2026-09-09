@@ -64,8 +64,8 @@ export default async function VehiclesPage({
                 <CarFront />
                 <p className="eyebrow muted">CATÁLOGO EN PREPARACIÓN</p>
                 <h2>Estamos incorporando nuestros primeros vehículos.</h2>
-                <p>No vamos a llenar este espacio con autos ficticios. Cuando un propietario confíe su vehículo a NERO y aprobemos la publicación, aparecerá acá.</p>
-                <a className="button button-light" href="/vende-tu-auto">Vendé tu auto con NERO</a>
+                <p>Cada vehículo publicado en NERO corresponde a una gestión real con su propietario. No mostramos stock ficticio.</p>
+                <div className="catalog-empty-actions"><a className="button button-light" href="/vende-tu-auto">Vendé tu auto con NERO</a><a className="button button-outline" href="/buscamos-tu-auto">Decinos qué auto buscás</a></div>
               </div>
             )}
           </section>

@@ -1,25 +1,30 @@
 # NERO Automóviles
 
-Primera versión operativa de [NERO Automóviles](https://www.instagram.com/nero.automoviles/), una marca uruguaya de intermediación de vehículos. El propietario conserva el auto; NERO prepara la publicación, recibe consultas, filtra interesados y coordina a las partes.
+Plataforma comercial de [NERO Automóviles](https://www.instagram.com/nero.automoviles/), un servicio uruguayo de intermediación digital de vehículos.
 
-El sitio público está preparado para operar sin inventar stock, oficinas, teléfonos ni resultados comerciales. Los vehículos aparecen en el catálogo únicamente cuando un administrador cambia su estado a `PUBLICADO`.
+El propietario conserva el vehículo. NERO prepara su presentación, promociona la gestión, recibe consultas, filtra interesados y acompaña la negociación. No existe costo inicial ni exclusividad. La comisión es del 4% del precio final únicamente cuando la venta se concreta con un comprador conseguido o gestionado por NERO. El pago del vehículo se realiza directamente entre comprador y propietario.
+
+El sitio está preparado para operar sin inventar stock, resultados comerciales, oficinas ni verificaciones. Los vehículos aparecen en el catálogo únicamente cuando un administrador cambia su estado a `PUBLICADO`.
 
 ## Funcionalidad
 
-- Sitio responsive con identidad negra, blanca y plata, logo oficial, navegación móvil, animaciones con `IntersectionObserver` y soporte para `prefers-reduced-motion`.
+- Sitio responsive con identidad negra, blanca y plata, logo oficial, navegación móvil, animaciones sutiles y `prefers-reduced-motion`.
+- Home orientada a captar propietarios y compradores, con el modelo comercial explicado en lenguaje directo.
 - Formularios persistentes para vender un auto, solicitar una búsqueda y realizar consultas u ofertas.
+- Datos privados del propietario separados de la futura publicación pública.
 - Hasta 12 fotografías por solicitud o vehículo, con validación real de JPEG, PNG y WebP, límite de 3 MB por archivo y almacenamiento privado en R2.
-- Catálogo con filtros por URL, orden, empty state y fichas dinámicas con galería, datos técnicos, consulta, oferta y WhatsApp opcional.
+- Catálogo con filtros por URL, orden, estado vacío y fichas dinámicas con galería, información declarada, revisión NERO, consulta y oferta.
+- Hasta tres vehículos destacados en la home cuando existan publicaciones reales; la sección se oculta mientras el catálogo esté vacío.
 - Panel privado con autenticación de ChatGPT, métricas reales, flujos de estados y CRUD de vehículos.
-- Conversión idempotente de una solicitud de venta a borrador, sin publicación automática.
+- Conversión idempotente de una solicitud aceptada a vehículo `BORRADOR`, sin publicación automática.
 - D1 para datos estructurados, R2 para archivos, rate limiting y auditoría administrativa.
-- SEO por página, metadata dinámica para vehículos, sitemap, robots, Open Graph, favicon y 404 propia.
+- SEO por página, metadata dinámica para vehículos, sitemap, robots, Open Graph, Twitter Card, favicon y 404 propia.
 
 ## Requisitos
 
-- Node.js **22.13 o posterior**. Se recomienda la rama activa más reciente compatible con Vinext.
+- Node.js 22.13 o posterior.
 - npm.
-- Acceso al proyecto de Sites/Cloudflare correspondiente para usar D1, R2 y el login privado.
+- Acceso al proyecto de Sites correspondiente para usar D1, R2 y el panel protegido.
 
 ## Instalación y desarrollo
 
@@ -29,31 +34,29 @@ cp .env.example .env.local
 npm run dev
 ```
 
-El servidor local informa su URL al iniciar. No agregues secretos al repositorio.
+No agregues secretos al repositorio.
 
 ## Variables de entorno
 
 | Variable | Obligatoria | Uso |
 | --- | --- | --- |
-| `NERO_ADMIN_EMAILS` | Para habilitar el panel | Lista de correos autorizados, separados por coma. La comprobación se realiza en el servidor. |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | No | Número internacional, solo dígitos. Si falta, las fichas conservan el formulario interno. |
+| `NERO_ADMIN_EMAILS` | Para habilitar el panel | Correos autorizados, separados por coma. Se comprueban en el servidor. |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | No | Número internacional, solo dígitos. Si falta, no aparece el botón de WhatsApp. |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | No | Email comercial visible en contacto y privacidad. Si falta, se muestra solamente Instagram. |
 
-No hay valores predeterminados porque NERO todavía debe confirmar el correo administrador y el número comercial.
+No se incluyen valores predeterminados para WhatsApp o email porque deben corresponder a canales confirmados por NERO.
 
-## Base de datos y archivos
+## Datos y privacidad
 
-El esquema está en `db/schema.ts`. Las migraciones versionadas se generan con:
+El esquema está en `db/schema.ts` y las migraciones versionadas en `drizzle/`. Las nuevas migraciones se generan con:
 
 ```bash
 npm run db:generate
 ```
 
-Sites empaqueta y aplica las migraciones incluidas en `drizzle/` durante el despliegue. En desarrollo, Vinext crea bindings locales para:
+Sites aplica las migraciones incluidas durante el despliegue. En desarrollo, Vinext crea los bindings locales `DB` y `FILES`.
 
-- `DB`: base D1.
-- `FILES`: bucket R2.
-
-Las fotografías de propietarios se guardan con claves privadas. Solo el endpoint administrativo autenticado puede verlas mientras el vehículo sea un borrador. El endpoint público comprueba el estado del vehículo antes de servir cada imagen.
+Las fotografías y los datos privados de propietarios se guardan fuera del frontend público. El endpoint administrativo autenticado puede consultarlos; las imágenes solo se sirven públicamente cuando pertenecen a un vehículo con estado público admitido.
 
 ## Calidad y build
 
@@ -61,38 +64,38 @@ Las fotografías de propietarios se guardan con claves privadas. Solo el endpoin
 npm run lint
 npm run typecheck
 npm run build
+npm run build:pages
 ```
 
-`npm run build:pages` genera una portada estática en `dist/pages`. Esa salida sirve como presentación visual en GitHub Pages, pero no puede ejecutar formularios, autenticación, D1 ni R2. La versión operativa se despliega con Sites.
+`npm run build:pages` genera una portada estática en `dist/pages`. GitHub Pages no ejecuta formularios, autenticación, D1 ni R2. Por eso la portada mantiene el mismo diseño y dirige las acciones comerciales a la aplicación completa de Sites, que es el origen canónico.
 
-### Auditoría de dependencias
-
-Se actualizaron sin `--force` React Server Components, Vinext, Vite, el plugin de Cloudflare, Wrangler y sus tipos para corregir las alertas directas y de runtime compatibles. `npm audit` conserva 4 alertas moderadas en la cadena de desarrollo de `drizzle-kit` (`@esbuild-kit`/`esbuild`). La corrección sugerida por npm exige bajar `drizzle-kit` a `0.18.1`, un cambio mayor e incompatible con la configuración actual; se mantiene documentada hasta que exista una actualización ascendente segura. Estas dependencias se usan para generar migraciones y no forman parte del código público de la aplicación.
+La auditoría conserva cuatro alertas moderadas en la cadena de desarrollo de `drizzle-kit` (`@esbuild-kit`/`esbuild`). La corrección propuesta por npm exige una versión anterior incompatible, por lo que no se fuerza. Estas dependencias generan migraciones y no forman parte del código público de ejecución.
 
 ## Administración
 
-1. Configurá `NERO_ADMIN_EMAILS` con el correo exacto de la cuenta que iniciará sesión.
-2. Entrá en `/admin` y autenticá la cuenta.
-3. Creá un vehículo o convertí una solicitud de venta.
-4. Revisá datos y fotos en estado `BORRADOR`.
+1. Configurá `NERO_ADMIN_EMAILS` con el correo exacto de la cuenta autorizada.
+2. Entrá en `/admin`.
+3. Creá un vehículo o convertí una solicitud aceptada.
+4. Revisá datos, fotografías, información declarada y notas de revisión en estado `BORRADOR`.
 5. Cambiá el estado a `PUBLICADO` para incorporarlo al catálogo.
 
-Los estados disponibles son:
+Estados disponibles:
 
 - Vehículos: `BORRADOR`, `PUBLICADO`, `RESERVADO`, `VENDIDO`.
-- Ventas: `NUEVA`, `CONTACTADO`, `ACEPTADO`, `RECHAZADO`.
-- Búsquedas: `NUEVA`, `CONTACTADO`, `BUSCANDO`, `OPCIONES_ENVIADAS`, `FINALIZADA`.
+- Solicitudes de vendedores: `PENDIENTE`, `EN_REVISION`, `ACEPTADA`, `RECHAZADA`.
+- Solicitudes de compradores: `NUEVA`, `CONTACTADO`, `BUSCANDO`, `OPCIONES_ENVIADAS`, `FINALIZADA`.
 - Consultas: `NUEVA`, `CONTACTADO`, `CERRADA`.
 
-## Despliegue
+## Publicación
 
-El proyecto de Sites está registrado en `.openai/hosting.json`. El despliegue operativo requiere un build correcto, las migraciones de `drizzle/` y la configuración de las variables de producción desde Sites.
+- Repositorio y portada estática: [DylanMachado1/nero-automoviles](https://github.com/DylanMachado1/nero-automoviles) y [GitHub Pages](https://dylanmachado1.github.io/nero-automoviles/).
+- Aplicación completa: [NERO Automóviles en Sites](https://nero-automoviles.dylanvpi1899.chatgpt.site/).
 
-El repositorio de GitHub es [DylanMachado1/nero-automoviles](https://github.com/DylanMachado1/nero-automoviles). GitHub Pages puede alojar la portada estática una vez que el plan y la visibilidad del repositorio permitan Pages; la aplicación completa necesita el runtime de Sites.
+GitHub Pages sirve la home sin backend. Sites sirve todas las rutas, formularios, base de datos, archivos y administración. La identidad visual es compartida para reducir el cambio de contexto; un dominio propio puede apuntar a la aplicación completa en el futuro.
 
 ## Datos pendientes del titular
 
-- Correo o correos con acceso administrativo.
 - Número de WhatsApp comercial, si se desea ese canal.
-- Dominio propio, si se desea reemplazar la URL de Sites.
-- Revisión profesional del texto provisional en `/condiciones` y `/privacidad` antes de una apertura pública.
+- Email comercial, si se desea mostrarlo.
+- Dominio propio, si se desea reemplazar la URL actual.
+- Revisión profesional de las condiciones y la política de privacidad cuando el negocio avance o cambien sus procesos.

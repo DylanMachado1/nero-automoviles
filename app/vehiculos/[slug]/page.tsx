@@ -30,6 +30,7 @@ type VehicleRow = {
   description: string;
   equipment: string | null;
   additional_info: string | null;
+  review_notes: string | null;
   status: string;
 };
 
@@ -102,17 +103,17 @@ export default async function VehiclePage({ params }: { params: Promise<{ slug: 
           <div className="vehicle-specs">
             {details.map(([Icon, value]) => <span key={value}><Icon />{value}</span>)}
           </div>
-          <article>
-            <h2>Sobre este vehículo</h2>
-            <p>{vehicle.description}</p>
-          </article>
+          <article className="vehicle-information"><p className="eyebrow muted">INFORMACIÓN DEL VEHÍCULO</p><h2>Datos principales</h2><p>La ficha reúne la información necesaria para conocer la propuesta y coordinar una consulta con NERO.</p></article>
+          <article className="owner-declaration"><p className="eyebrow muted">INFORMACIÓN DECLARADA POR EL PROPIETARIO</p><h2>Descripción y estado informado</h2><p>{vehicle.description}</p></article>
           {equipment.length > 0 && (
             <article>
               <h2>Equipamiento</h2>
               <ul className="equipment-list">{equipment.map((item) => <li key={item}>{item}</li>)}</ul>
             </article>
           )}
-          {vehicle.additional_info && <article><h2>Información adicional</h2><p>{vehicle.additional_info}</p></article>}
+          {vehicle.additional_info && <article><h2>Información adicional declarada</h2><p>{vehicle.additional_info}</p></article>}
+          <article className="nero-review"><p className="eyebrow muted">REVISIÓN NERO</p><h2>Alcance de la revisión</h2><p>{vehicle.review_notes || 'NERO todavía no registró observaciones de una revisión adicional para este vehículo. Consultá el alcance antes de tomar una decisión.'}</p></article>
+          <aside className="managed-operation"><p className="eyebrow muted">OPERACIÓN GESTIONADA POR NERO</p><div>{['Consultas gestionadas','Propietario identificado','Coordinación de interesados','Acompañamiento en la negociación'].map((item)=><span key={item}>{item}</span>)}</div><p>NERO actúa como intermediario y no ofrece una garantía mecánica del vehículo.</p></aside>
           <div className="vehicle-disclosure">La ubicación pública se limita a ciudad y departamento. NERO coordina el contacto con el propietario.</div>
           {whatsappNumber && <a className="button button-light vehicle-whatsapp" href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappText)}`} target="_blank" rel="noreferrer"><MessageCircle /> Consultar por WhatsApp</a>}
           <div className="inquiry-grid">
