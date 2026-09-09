@@ -69,7 +69,7 @@ npm run build:pages
 
 `npm run build:pages` genera una portada estática en `dist/pages`. GitHub Pages no ejecuta formularios, autenticación, D1 ni R2. Por eso la portada mantiene el mismo diseño y dirige las acciones comerciales a la aplicación completa de Sites, que es el origen canónico.
 
-La auditoría conserva cuatro alertas moderadas en la cadena de desarrollo de `drizzle-kit` (`@esbuild-kit`/`esbuild`). La corrección propuesta por npm exige una versión anterior incompatible, por lo que no se fuerza. Estas dependencias generan migraciones y no forman parte del código público de ejecución.
+`npm audit --omit=dev` informa 0 vulnerabilidades en las dependencias de producción. La auditoría completa conserva 8 alertas en herramientas de desarrollo: 4 moderadas en la cadena de `drizzle-kit` (`@esbuild-kit`/`esbuild`) y 4 altas en la cadena local de Cloudflare (`miniflare`/`wrangler`/`sharp`). Las correcciones propuestas por npm requieren cambios de versión incompatibles, por lo que no se fuerzan sin una migración específica.
 
 ## Administración
 
