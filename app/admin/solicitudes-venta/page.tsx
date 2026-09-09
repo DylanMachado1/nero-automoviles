@@ -1,5 +1,6 @@
 import { EntityActions } from '@/components/admin/entity-table';
 import { getBindings } from '@/db';
+import { isAdmin } from '@/services/admin-auth';
 
 type SellerRow = {
   id: string; name: string; phone: string; email: string | null; brand: string; model: string;
@@ -13,6 +14,7 @@ const fileUrl = (key: string) => `/api/admin/files/${key.split('/').map(encodeUR
 const answer = (value: string) => ({ yes: 'Sí', no: 'No', unknown: 'No sé' }[value] ?? value);
 
 export default async function Page() {
+  if (!(await isAdmin())) return null;
   let rows: SellerRow[] = [];
   let photos: PhotoRow[] = [];
   try {

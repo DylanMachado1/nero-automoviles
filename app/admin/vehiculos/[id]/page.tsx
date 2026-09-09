@@ -1,8 +1,10 @@
 import { notFound } from 'next/navigation';
 import { VehicleEditor } from '@/components/admin/vehicle-editor';
 import { getBindings } from '@/db';
+import { isAdmin } from '@/services/admin-auth';
 
 export default async function VehicleEditPage({ params }: { params: Promise<{ id: string }> }) {
+  if (!(await isAdmin())) return null;
   const { id } = await params;
   const { db } = getBindings();
   const vehicle = await db.prepare('SELECT * FROM vehicles WHERE id=? LIMIT 1').bind(id).first<Record<string, string | number | null>>();
