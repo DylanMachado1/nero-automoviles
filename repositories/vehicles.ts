@@ -11,4 +11,4 @@ export async function listPublicVehicles(query:Record<string,string|undefined>={
  const sql=`SELECT v.id,v.slug,v.brand,v.model,v.version,v.year,v.price,v.currency,v.mileage,v.fuel,v.transmission,v.department,v.city,v.status,(SELECT object_key FROM vehicle_images WHERE vehicle_id=v.id ORDER BY is_primary DESC,position ASC LIMIT 1) image_key FROM vehicles v WHERE ${clauses.join(' AND ')} ORDER BY ${order} LIMIT 60`;
  const result=await db.prepare(sql).bind(...values).all<Row>();return result.results.map(map);
 }
-export async function getPublicVehicle(slug:string){const {db}=getBindings();return db.prepare("SELECT * FROM vehicles WHERE slug=? AND status IN ('PUBLICADO','RESERVADO','VENDIDO') LIMIT 1").bind(slug).first<Record<string,unknown>>();}
+export async function getPublicVehicle(slug:string){const {db}=getBindings();return db.prepare("SELECT id,slug,brand,model,version,year,price,currency,mileage,fuel,transmission,engine,department,city,color,doors,condition,description,equipment,additional_info,review_notes,status FROM vehicles WHERE slug=? AND status IN ('PUBLICADO','RESERVADO','VENDIDO') LIMIT 1").bind(slug).first<Record<string,unknown>>();}

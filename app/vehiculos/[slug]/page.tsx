@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import { Fuel, Gauge, MapPin, MessageCircle, Palette, Settings2 } from 'lucide-react';
 import { SiteShell } from '@/components/nero/site-shell';
@@ -38,11 +39,11 @@ type ImageRow = { object_key: string; alt: string | null };
 
 const imageUrl = (key: string) => `/api/vehicle-images/${key.split('/').map(encodeURIComponent).join('/')}`;
 
-async function record(slug: string) {
+const record = cache(async (slug: string) => {
   try {
     const { db } = getBindings();
     const vehicle = await db.prepare(
-      "SELECT * FROM vehicles WHERE slug=? AND status IN ('PUBLICADO','RESERVADO','VENDIDO') LIMIT 1",
+      "SELECT id,slug,brand,model,version,year,price,currency,mileage,fuel,transmission,engine,department,city,color,doors,condition,description,equipment,additional_info,review_notes,status FROM vehicles WHERE slug=? AND status IN ('PUBLICADO','RESERVADO','VENDIDO') LIMIT 1",
     ).bind(slug).first<VehicleRow>();
     if (!vehicle) return null;
     const images = await db.prepare(
@@ -52,7 +53,7 @@ async function record(slug: string) {
   } catch {
     return null;
   }
-}
+});
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
