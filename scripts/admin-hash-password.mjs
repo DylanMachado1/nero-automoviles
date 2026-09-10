@@ -7,8 +7,12 @@ if (!password) {
 }
 
 const iterations = 600_000;
+const maxIterationsPerDerivation = 100_000;
 const salt = randomBytes(16);
-const hash = pbkdf2Sync(password, salt, iterations, 32, 'sha256');
+let hash = Buffer.from(password);
+for (let remaining = iterations; remaining > 0; remaining -= maxIterationsPerDerivation) {
+  hash = pbkdf2Sync(hash, salt, Math.min(remaining, maxIterationsPerDerivation), 32, 'sha256');
+}
 process.stdout.write(
   `pbkdf2-sha256.${iterations}.${salt.toString('base64url')}.${hash.toString('base64url')}\n`,
 );

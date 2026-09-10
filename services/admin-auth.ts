@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 const COOKIE_NAME = 'nero_admin_session';
 const SESSION_SECONDS = 60 * 60 * 24 * 7;
 const HASH_PREFIX = 'pbkdf2-sha256';
+const MAX_ITERATIONS_PER_DERIVATION = 100_000;
 const encoder = new TextEncoder();
 
 export type AdminSession = {
@@ -104,45 +105,37 @@ async function verifyPassword(password: string, encodedHash: string): Promise<bo
     const salt = base64UrlToBytes(saltText);
     const expected = base64UrlToBytes(expectedText);
     if (salt.length < 16 || expected.length !== 32) return false;
-    const material = await crypto.subtle.importKey(
+    let material = await crypto.subtle.importKey(
       'raw',
       encoder.encode(password),
       'PBKDF2',
       false,
       ['deriveBits'],
     );
-    const actual = new Uint8Array(
-      await crypto.subtle.deriveBits(
-        { name: 'PBKDF2', hash: 'SHA-256', salt, iterations },
-        material,
-        expected.length * 8,
-      ),
-    );
-    let differingBytes = 0;
-    for (let index = 0; index < Math.max(actual.length, expected.length); index += 1) {
-      if ((actual[index] ?? 0) !== (expected[index] ?? 0)) differingBytes += 1;
-    }
-    if (differingBytes > 0) {
-      console.info('[admin-pbkdf2-debug]', {
-        saltFirstByte: salt[0],
-        expectedFirstByte: expected[0],
-        actualFirstByte: actual[0],
-        expectedLastByte: expected[expected.length - 1],
-        actualLastByte: actual[actual.length - 1],
-        actualLength: actual.length,
-        differingBytes,
-      });
+    let actual = new Uint8Array();
+    for (let remaining = iterations; remaining > 0; remaining -= MAX_ITERATIONS_PER_DERIVATION) {
+      actual = new Uint8Array(
+        await crypto.subtle.deriveBits(
+          {
+            name: 'PBKDF2',
+            hash: 'SHA-256',
+            salt,
+            iterations: Math.min(remaining, MAX_ITERATIONS_PER_DERIVATION),
+          },
+          material,
+          expected.length * 8,
+        ),
+      );
+      if (remaining > MAX_ITERATIONS_PER_DERIVATION) {
+        material = await crypto.subtle.importKey('raw', actual, 'PBKDF2', false, ['deriveBits']);
+      }
     }
     let difference = actual.length ^ expected.length;
     for (let index = 0; index < Math.max(actual.length, expected.length); index += 1) {
       difference |= (actual[index] ?? 0) ^ (expected[index] ?? 0);
     }
     return difference === 0;
-  } catch (error) {
-    console.info('[admin-pbkdf2-error]', {
-      errorName: error instanceof Error ? error.name : 'unknown',
-      errorMessage: error instanceof Error ? error.message : 'unknown',
-    });
+  } catch {
     return false;
   }
 }
@@ -153,21 +146,6 @@ export async function verifyAdminCredentials(email: string, password: string): P
     constantTimeTextEqual(email.trim().toLowerCase(), config.email),
     verifyPassword(password, config.passwordHash),
   ]);
-  if (!emailMatches || !passwordMatches) {
-    const hashParts = config.passwordHash.split('.');
-    console.info('[admin-auth-check]', {
-      emailMatches,
-      passwordMatches,
-      receivedEmailLength: email.trim().toLowerCase().length,
-      configuredEmailLength: config.email.length,
-      passwordLength: encoder.encode(password).length,
-      hashPartCount: hashParts.length,
-      hashPrefixMatches: hashParts[0] === HASH_PREFIX,
-      hashIterations: Number(hashParts[1]),
-      hashSaltLength: hashParts[2]?.length ?? 0,
-      hashValueLength: hashParts[3]?.length ?? 0,
-    });
-  }
   return emailMatches && passwordMatches;
 }
 
