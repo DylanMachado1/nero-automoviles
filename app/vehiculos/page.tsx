@@ -38,38 +38,40 @@ export default async function VehiclesPage({
           <p>Publicaciones revisadas y gestionadas por NERO. Cada vehículo permanece con su propietario.</p>
         </header>
 
-        <div className="catalog-toolbar">
-          <span>{vehicles.length} {vehicles.length === 1 ? 'resultado' : 'resultados'}</span>
-          <form>
-            {Object.entries(query).filter(([key]) => key !== 'order').map(([key, value]) => (
-              value ? <input key={key} type="hidden" name={key} value={value} /> : null
-            ))}
-            <select name="order" defaultValue={query.order ?? 'recent'} aria-label="Ordenar vehículos">
-              <option value="recent">Más recientes</option>
-              <option value="priceAsc">Menor precio</option>
-              <option value="priceDesc">Mayor precio</option>
-              <option value="mileage">Menor kilometraje</option>
-              <option value="year">Más nuevos</option>
-            </select>
-            <button>Ordenar</button>
-          </form>
-        </div>
-
         <div className="catalog-layout">
           <CatalogFilters defaults={query} />
-          <section className="vehicle-grid" aria-label="Resultados">
-            {vehicles.length ? vehicles.map((vehicle) => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle} />
-            )) : (
-              <div className="catalog-page-empty">
-                <CarFront />
-                <p className="eyebrow muted">CATÁLOGO EN PREPARACIÓN</p>
-                <h2>Estamos incorporando nuestros primeros vehículos.</h2>
-                <p>Cada vehículo publicado en NERO corresponde a una gestión real con su propietario. No mostramos stock ficticio.</p>
-                <div className="catalog-empty-actions"><a className="button button-light" href={sitePath('/vende-tu-auto')}>Vendé tu auto con NERO</a><a className="button button-outline" href={sitePath('/buscamos-tu-auto')}>Decinos qué auto buscás</a></div>
-              </div>
-            )}
-          </section>
+          <div className="catalog-results">
+            <div className="catalog-toolbar">
+              <span>{vehicles.length} {vehicles.length === 1 ? 'vehículo encontrado' : 'vehículos encontrados'}</span>
+              <form>
+                {Object.entries(query).filter(([key]) => key !== 'order').map(([key, value]) => (
+                  value ? <input key={key} type="hidden" name={key} value={value} /> : null
+                ))}
+                <label htmlFor="catalog-order">Ordenar por</label>
+                <select id="catalog-order" name="order" defaultValue={query.order ?? 'recent'}>
+                  <option value="recent">Más recientes</option>
+                  <option value="priceAsc">Menor precio</option>
+                  <option value="priceDesc">Mayor precio</option>
+                  <option value="mileage">Menor kilometraje</option>
+                  <option value="year">Más nuevos</option>
+                </select>
+                <button>Ordenar</button>
+              </form>
+            </div>
+            <section className="vehicle-grid" aria-label="Resultados">
+              {vehicles.length ? vehicles.map((vehicle) => (
+                <VehicleCard key={vehicle.id} vehicle={vehicle} compact />
+              )) : (
+                <div className="catalog-page-empty">
+                  <CarFront />
+                  <p className="eyebrow muted">CATÁLOGO EN PREPARACIÓN</p>
+                  <h2>Estamos incorporando nuestros primeros vehículos.</h2>
+                  <p>Cada vehículo publicado en NERO corresponde a una gestión real con su propietario. No mostramos stock ficticio.</p>
+                  <div className="catalog-empty-actions"><a className="button button-light" href={sitePath('/vende-tu-auto')}>Vendé tu auto con NERO</a><a className="button button-outline" href={sitePath('/buscamos-tu-auto')}>Decinos qué auto buscás</a></div>
+                </div>
+              )}
+            </section>
+          </div>
         </div>
       </main>
     </SiteShell>
