@@ -85,7 +85,7 @@ async function constantTimeTextEqual(left: string, right: string): Promise<boole
 }
 
 async function verifyPassword(password: string, encodedHash: string): Promise<boolean> {
-  const [prefix, iterationsText, saltText, expectedText, extra] = encodedHash.split('$');
+  const [prefix, iterationsText, saltText, expectedText, extra] = encodedHash.split('.');
   const iterations = Number(iterationsText);
   if (
     prefix !== HASH_PREFIX ||

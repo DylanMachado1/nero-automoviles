@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    await enforceRateLimit(request, 'admin-login', 5, 15);
+    await enforceRateLimit(request, 'admin-login-v2', 5, 15);
   } catch (error) {
     await wait(350);
     const rateLimited =
