@@ -1,5 +1,5 @@
 import { getBindings } from '@/db';
-import { requireAdmin } from '@/services/admin-auth';
+import { adminApiError, requireAdmin } from '@/services/admin-auth';
 import { MAX_IMAGE_SIZE, validImage } from '@/services/images';
 
 export const runtime = 'edge';
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     if (stored.length) {
       try { await getBindings().files.delete(stored); } catch { /* best-effort cleanup */ }
     }
-    return Response.json({ ok: false, error: error instanceof Error ? error.message : 'No se pudieron subir las imágenes.' }, { status: 400 });
+    return adminApiError(error, 'No se pudieron subir las imágenes.');
   }
 }
 
@@ -77,6 +77,6 @@ export async function PATCH(request: Request) {
     ).run();
     return Response.json({ ok: true });
   } catch (error) {
-    return Response.json({ ok: false, error: error instanceof Error ? error.message : 'No se pudo actualizar la galería.' }, { status: 400 });
+    return adminApiError(error, 'No se pudo actualizar la galería.');
   }
 }

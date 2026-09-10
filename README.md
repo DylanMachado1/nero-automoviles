@@ -15,7 +15,7 @@ El sitio está preparado para operar sin inventar stock, resultados comerciales,
 - Hasta 12 fotografías por solicitud o vehículo, con validación real de JPEG, PNG y WebP, límite de 3 MB por archivo y almacenamiento privado en R2.
 - Catálogo con filtros por URL, orden, estado vacío y fichas dinámicas con galería, información declarada, revisión NERO, consulta y oferta.
 - Hasta tres vehículos destacados en la home cuando existan publicaciones reales; la sección se oculta mientras el catálogo esté vacío.
-- Panel privado con autenticación de ChatGPT, métricas reales, flujos de estados y CRUD de vehículos.
+- Panel privado con login propio de NERO, sesión firmada, métricas reales, flujos de estados y CRUD de vehículos.
 - Conversión idempotente de una solicitud aceptada a vehículo `BORRADOR`, sin publicación automática.
 - D1 para datos estructurados, R2 para archivos, rate limiting y auditoría administrativa.
 - SEO por página, metadata dinámica para vehículos, sitemap, robots, Open Graph, Twitter Card, favicon y 404 propia.
@@ -40,7 +40,9 @@ No agregues secretos al repositorio.
 
 | Variable | Obligatoria | Uso |
 | --- | --- | --- |
-| `NERO_ADMIN_EMAILS` | Para habilitar el panel | Correos autorizados, separados por coma. Se comprueban en el servidor. |
+| `ADMIN_EMAIL` | Sí | Correo del único administrador inicial. Solo se comprueba en el servidor. |
+| `ADMIN_PASSWORD_HASH` | Sí | Hash PBKDF2-SHA256 de la contraseña. Nunca se guarda la contraseña en texto plano. |
+| `ADMIN_SESSION_SECRET` | Sí | Secreto aleatorio de al menos 32 caracteres para firmar las sesiones. |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | No | Número internacional, solo dígitos. Si falta, no aparece el botón de WhatsApp. |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | No | Email comercial visible en contacto y privacidad. Si falta, se muestra solamente Instagram. |
 
@@ -73,11 +75,13 @@ npm run build:pages
 
 ## Administración
 
-1. Configurá `NERO_ADMIN_EMAILS` con el correo exacto de la cuenta autorizada.
-2. Entrá en `/admin`.
-3. Llevá la solicitud de `PENDIENTE` a `EN_REVISION` y, si corresponde, a `ACEPTADA`. Solamente entonces puede convertirse en vehículo.
-4. Revisá datos, fotografías, información declarada y notas de revisión en estado `BORRADOR`.
-5. Cambiá el estado a `PUBLICADO` para incorporarlo al catálogo.
+1. Generá el hash con `npm run --silent admin:hash-password -- "MiContraseña"` y guardalo como `ADMIN_PASSWORD_HASH`.
+2. Generá `ADMIN_SESSION_SECRET` con `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"`.
+3. Configurá `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH` y `ADMIN_SESSION_SECRET` como secretos del proyecto de Sites. Para desarrollo local, ponelos solamente en `.env.local`.
+4. Entrá en `/admin/login`. Una sesión válida dura siete días y puede cerrarse desde el panel.
+5. Llevá la solicitud de `PENDIENTE` a `EN_REVISION` y, si corresponde, a `ACEPTADA`. Solamente entonces puede convertirse en vehículo.
+6. Revisá datos, fotografías, información declarada y notas de revisión en estado `BORRADOR`.
+7. Cambiá el estado a `PUBLICADO` para incorporarlo al catálogo.
 
 Estados disponibles:
 

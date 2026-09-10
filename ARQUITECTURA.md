@@ -20,10 +20,10 @@ El lanzamiento dará prioridad a captar vehículos con «Vendé tu auto con NERO
 | Datos | Cloudflare D1 (SQLite), consultas parametrizadas | Persistencia relacional y búsquedas indexadas |
 | Migraciones | Drizzle | Evolución versionada del esquema |
 | Fotografías | Cloudflare R2 | Archivos separados de los datos comerciales |
-| Acceso administrativo | Inicio de sesión con ChatGPT + autorización propia del servidor | Sin contraseñas almacenadas por NERO; acceso limitado a administradores habilitados |
+| Acceso administrativo | Login propio de NERO con PBKDF2 y sesión firmada | Un administrador inicial, contraseña sin texto plano y acceso limitado por cookie segura |
 | Alojamiento inicial | Sites, con revisión privada antes de lanzamiento público | Validar la aplicación sin exponer solicitudes ni un sitio sin revisar |
 
-La autenticación propuesta requiere una cuenta ChatGPT para cada administrador; los visitantes no necesitan iniciar sesión para consultar o enviar solicitudes. Si NERO necesita un acceso independiente por email y contraseña, esa decisión debe resolverse antes de implementar autenticación.
+El acceso administrativo usa `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH` y `ADMIN_SESSION_SECRET` como secretos del servidor. Los visitantes no necesitan iniciar sesión para consultar o enviar solicitudes.
 
 Vinext es la base que proporciona Sites y su versión instalada está identificada como beta. Mantendremos versiones fijadas, pruebas de los flujos críticos y la lógica comercial separada del framework. D1 es adecuado para este alcance; una futura migración a PostgreSQL requerirá adaptar el repositorio de datos y las migraciones, no rehacer la interfaz.
 

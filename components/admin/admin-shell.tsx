@@ -1,3 +1,59 @@
-import { BarChart3,CarFront,FileText,LogOut,MessageSquare,Search,ShieldAlert } from 'lucide-react';import { chatGPTSignInPath,chatGPTSignOutPath,getChatGPTUser } from '@/app/chatgpt-auth';import { isAdmin } from '@/services/admin-auth';import { Logo } from '@/components/nero/logo';import { sitePath } from '@/lib/brand';
-const links=[['Panel','/admin',BarChart3],['Vehículos','/admin/vehiculos',CarFront],['Solicitudes de venta','/admin/solicitudes-venta',FileText],['Búsquedas','/admin/busquedas',Search],['Consultas','/admin/consultas',MessageSquare]] as const;
-export async function AdminShell({children}:{children:React.ReactNode}){const user=await getChatGPTUser();if(!user)return <main className="admin-login"><Logo/><h1>Administración NERO</h1><p>Iniciá sesión con la cuenta autorizada para continuar.</p><a className="button button-light" href={chatGPTSignInPath('/admin')} target="_top">Ingresar con ChatGPT</a></main>;let admin=null;try{admin=await isAdmin()}catch{}if(!admin)return <main className="admin-login"><ShieldAlert/><h1>Acceso restringido</h1><p>La cuenta <strong>{user.email}</strong> no figura entre los administradores habilitados.</p><a href={sitePath('/')} className="button button-outline">Volver al sitio</a></main>;return <div className="admin-app"><aside className="admin-sidebar"><a href={sitePath('/')}><Logo compact/></a><nav>{links.map(([label,href,Icon])=><a href={sitePath(href)} key={href}><Icon/>{label}</a>)}</nav><a className="admin-signout" href={chatGPTSignOutPath('/')}><LogOut/>Salir</a></aside><div className="admin-surface"><header><div><span>Panel privado</span><strong>{user.displayName}</strong></div><a href={sitePath('/')} target="_blank">Ver sitio ↗</a></header>{children}</div></div>}
+import { BarChart3, CarFront, FileText, LogOut, MessageSquare, Search } from 'lucide-react';
+import { Logo } from '@/components/nero/logo';
+import { sitePath } from '@/lib/brand';
+import type { AdminSession } from '@/services/admin-auth';
+
+const links = [
+  ['Panel', '/admin', BarChart3],
+  ['Vehículos', '/admin/vehiculos', CarFront],
+  ['Solicitudes de venta', '/admin/solicitudes-venta', FileText],
+  ['Búsquedas', '/admin/busquedas', Search],
+  ['Consultas', '/admin/consultas', MessageSquare],
+] as const;
+
+function LogoutButton({ compact = false }: { compact?: boolean }) {
+  return (
+    <form action={sitePath('/api/admin/logout')} method="post" className={compact ? 'admin-header-logout' : 'admin-sidebar-logout'}>
+      <button className="admin-signout" type="submit">
+        <LogOut />
+        <span>Cerrar sesión</span>
+      </button>
+    </form>
+  );
+}
+
+export function AdminShell({ children, admin }: { children: React.ReactNode; admin: AdminSession }) {
+  return (
+    <div className="admin-app">
+      <aside className="admin-sidebar">
+        <a href={sitePath('/')} aria-label="Ir al sitio público de NERO">
+          <Logo compact />
+        </a>
+        <nav aria-label="Navegación administrativa">
+          {links.map(([label, href, Icon]) => (
+            <a href={sitePath(href)} key={href}>
+              <Icon />
+              {label}
+            </a>
+          ))}
+        </nav>
+        <LogoutButton />
+      </aside>
+      <div className="admin-surface">
+        <header>
+          <div className="admin-identity">
+            <span>Panel privado</span>
+            <strong>{admin.displayName}</strong>
+          </div>
+          <div className="admin-header-actions">
+            <a href={sitePath('/')} target="_blank" rel="noreferrer">
+              Ver sitio ↗
+            </a>
+            <LogoutButton compact />
+          </div>
+        </header>
+        {children}
+      </div>
+    </div>
+  );
+}

@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "format": "oxfmt",
     "db:generate": "drizzle-kit generate",
+    "admin:hash-password": "node scripts/admin-hash-password.mjs",
     "build:pages": "vite build --config vite.pages.config.ts"
   },
   "dependencies": {

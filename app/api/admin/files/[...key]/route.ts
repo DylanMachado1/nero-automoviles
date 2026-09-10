@@ -1,5 +1,5 @@
 import { getBindings } from '@/db';
-import { requireAdmin } from '@/services/admin-auth';
+import { isAdminAuthError, requireAdmin } from '@/services/admin-auth';
 
 export const runtime = 'edge';
 
@@ -14,7 +14,9 @@ export async function GET(_: Request, { params }: { params: Promise<{ key: strin
     headers.set('cache-control', 'private, max-age=300');
     headers.set('x-content-type-options', 'nosniff');
     return new Response(object.body, { headers });
-  } catch {
-    return new Response('No autorizado', { status: 401 });
+  } catch (error) {
+    return new Response(isAdminAuthError(error) ? 'No autorizado' : 'No se pudo obtener el archivo', {
+      status: isAdminAuthError(error) ? 401 : 500,
+    });
   }
 }

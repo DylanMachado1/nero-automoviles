@@ -1,5 +1,5 @@
 import { getBindings } from '@/db';
-import { requireAdmin } from '@/services/admin-auth';
+import { adminApiError, requireAdmin } from '@/services/admin-auth';
 import { integer, optional, required } from '@/validators/requests';
 
 export const runtime = 'edge';
@@ -46,7 +46,7 @@ export async function PATCH(request: Request, { params }: Context) {
     ]);
     return Response.json({ ok: true });
   } catch (error) {
-    return Response.json({ ok: false, error: error instanceof Error ? error.message : 'No se pudo actualizar.' }, { status: 400 });
+    return adminApiError(error, 'No se pudo actualizar.');
   }
 }
 
@@ -68,6 +68,6 @@ export async function DELETE(_: Request, { params }: Context) {
     if (images.results.length) await files.delete(images.results.map((image) => image.object_key));
     return Response.json({ ok: true });
   } catch (error) {
-    return Response.json({ ok: false, error: error instanceof Error ? error.message : 'No se pudo eliminar.' }, { status: 400 });
+    return adminApiError(error, 'No se pudo eliminar.');
   }
 }

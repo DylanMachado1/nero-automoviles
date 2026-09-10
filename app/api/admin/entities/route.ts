@@ -1,6 +1,6 @@
 import { getBindings } from '@/db';
 import { slugify } from '@/lib/format';
-import { requireAdmin } from '@/services/admin-auth';
+import { adminApiError, requireAdmin } from '@/services/admin-auth';
 
 const options = {
   vehicle: ['BORRADOR','PUBLICADO','RESERVADO','VENDIDO'],
@@ -50,6 +50,6 @@ export async function POST(request: Request) {
     }
     throw new Error('Acción no permitida.');
   } catch (error) {
-    return Response.json({ ok:false, error:error instanceof Error?error.message:'No se pudo completar la acción.' }, { status:400 });
+    return adminApiError(error, 'No se pudo completar la acción.');
   }
 }

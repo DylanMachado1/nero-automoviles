@@ -14,5 +14,5 @@ export function getDb() {
 
 export function getBindings() {
   if (!env.DB || !env.FILES) throw new Error('Los servicios de datos no están configurados.');
-  return { db: env.DB, files: env.FILES, adminEmails: env.NERO_ADMIN_EMAILS ?? '' };
+  return { db: env.DB, files: env.FILES };
 }
