@@ -118,6 +118,16 @@ async function verifyPassword(password: string, encodedHash: string): Promise<bo
         expected.length * 8,
       ),
     );
+    if (actual.length !== expected.length || actual[0] !== expected[0] || actual[actual.length - 1] !== expected[expected.length - 1]) {
+      console.info('[admin-pbkdf2-debug]', {
+        saltFirstByte: salt[0],
+        expectedFirstByte: expected[0],
+        actualFirstByte: actual[0],
+        expectedLastByte: expected[expected.length - 1],
+        actualLastByte: actual[actual.length - 1],
+        actualLength: actual.length,
+      });
+    }
     let difference = actual.length ^ expected.length;
     for (let index = 0; index < Math.max(actual.length, expected.length); index += 1) {
       difference |= (actual[index] ?? 0) ^ (expected[index] ?? 0);
