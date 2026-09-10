@@ -134,6 +134,21 @@ export async function verifyAdminCredentials(email: string, password: string): P
     constantTimeTextEqual(email.trim().toLowerCase(), config.email),
     verifyPassword(password, config.passwordHash),
   ]);
+  if (!emailMatches || !passwordMatches) {
+    const hashParts = config.passwordHash.split('.');
+    console.info('[admin-auth-check]', {
+      emailMatches,
+      passwordMatches,
+      receivedEmailLength: email.trim().toLowerCase().length,
+      configuredEmailLength: config.email.length,
+      passwordLength: encoder.encode(password).length,
+      hashPartCount: hashParts.length,
+      hashPrefixMatches: hashParts[0] === HASH_PREFIX,
+      hashIterations: Number(hashParts[1]),
+      hashSaltLength: hashParts[2]?.length ?? 0,
+      hashValueLength: hashParts[3]?.length ?? 0,
+    });
+  }
   return emailMatches && passwordMatches;
 }
 
