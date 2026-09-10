@@ -138,7 +138,11 @@ async function verifyPassword(password: string, encodedHash: string): Promise<bo
       difference |= (actual[index] ?? 0) ^ (expected[index] ?? 0);
     }
     return difference === 0;
-  } catch {
+  } catch (error) {
+    console.info('[admin-pbkdf2-error]', {
+      errorName: error instanceof Error ? error.name : 'unknown',
+      errorMessage: error instanceof Error ? error.message : 'unknown',
+    });
     return false;
   }
 }
